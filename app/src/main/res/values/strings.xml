@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Catatan Keuangan</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_history">Riwayat</string>
+    <string name="nav_analytics">Grafik</string>
+    <string name="nav_reports">Laporan</string>
+    <string name="nav_profile">Saya</string>
+
+    <!-- Transaction Types -->
+    <string name="type_expense">Pengeluaran</string>
+    <string name="type_income">Pemasukan</string>
+    <string name="type_transfer">Transfer</string>
+
+    <!-- History Screen -->
+    <string name="label_balance">Saldo</string>
+    <string name="label_income">Pemasukan</string>
+    <string name="label_expense">Pengeluaran</string>
+    <string name="empty_transactions">Belum ada transaksi</string>
+    <string name="empty_transactions_hint">Tap tombol + untuk menambahkan transaksi baru</string>
+    <string name="prev_month">Bulan sebelumnya</string>
+    <string name="next_month">Bulan berikutnya</string>
+
+    <!-- Add Transaction -->
+    <string name="add_transaction">Tambah Transaksi</string>
+    <string name="hint_note">Catatan (opsional)</string>
+    <string name="btn_save">Simpan</string>
+    <string name="btn_cancel">Batal</string>
+    <string name="btn_confirm">Konfirmasi</string>
+
+    <!-- Category -->
+    <string name="category_management">Pengaturan Kategori</string>
+    <string name="add_category">Tambah Kategori</string>
+    <string name="delete_category">Hapus Kategori</string>
+
+    <!-- Errors -->
+    <string name="error_amount_zero">Nominal harus lebih dari nol</string>
+    <string name="error_no_category">Pilih kategori terlebih dahulu</string>
+    <string name="error_generic">Terjadi kesalahan, coba lagi</string>
+
+    <!-- Success Messages -->
+    <string name="success_transaction_added">Transaksi berhasil disimpan</string>
+    <string name="success_transaction_deleted">Transaksi berhasil dihapus</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme (Material 3 / Compose-driven) -->
+    <style name="Theme.FinancialTracker" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Splash screen theme using SplashScreen API -->
+    <style name="Theme.FinancialTracker.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#00C853</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.FinancialTracker</item>
+    </style>
+</resources>

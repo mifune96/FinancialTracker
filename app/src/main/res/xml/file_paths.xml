@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Used by FileProvider for camera-captured receipt images -->
+    <external-cache-path name="receipt_images" path="images/" />
+    <external-files-path name="external_files" path="." />
+    <cache-path name="csv_export" path="." />
+</paths>
