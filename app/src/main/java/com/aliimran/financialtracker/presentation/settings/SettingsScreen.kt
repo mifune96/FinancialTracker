@@ -204,7 +204,7 @@ fun SettingsScreen(
                         checked = viewModel.isReminderEnabled,
                         onCheckedChange = { enabled ->
                             if (enabled) {
-                                // 1. Check notification permission (Android 13+)
+                                // Check notification permission (Android 13+)
                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                                     val hasNotifPermission = androidx.core.content.ContextCompat.checkSelfPermission(
                                         context,
@@ -215,20 +215,6 @@ fun SettingsScreen(
                                         return@SwitchRow
                                     }
                                 }
-                                // 2. Check exact alarm permission (Android 12+)
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                                    val alarmManager = context.getSystemService(android.app.AlarmManager::class.java)
-                                    if (!alarmManager.canScheduleExactAlarms()) {
-                                        Toast.makeText(context, "Izinkan alarm terlebih dahulu", Toast.LENGTH_SHORT).show()
-                                        val intent = android.content.Intent(
-                                            android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                                            android.net.Uri.parse("package:${context.packageName}"),
-                                        )
-                                        context.startActivity(intent)
-                                        return@SwitchRow
-                                    }
-                                }
-                                // All permissions granted
                                 viewModel.toggleReminder(true)
                                 Toast.makeText(context, "Pengingat harian diaktifkan", Toast.LENGTH_SHORT).show()
                             } else {

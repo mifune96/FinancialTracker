@@ -7,10 +7,12 @@ import android.content.Intent
 import java.util.Calendar
 
 /**
- * Schedules / cancels the daily reminder alarm at 12:00 (noon).
+ * Schedules / cancels the daily reminder alarm at 20:00 (8 PM).
  *
  * Uses [AlarmManager.setInexactRepeating] with [AlarmManager.INTERVAL_DAY]
  * so the OS can batch the alarm with others to save battery.
+ * This avoids the need for SCHEDULE_EXACT_ALARM permission which
+ * can cause Play Store rejection for non-alarm apps.
  */
 object ReminderScheduler {
 
@@ -18,7 +20,7 @@ object ReminderScheduler {
     const val PREFS_NAME = "financial_tracker_prefs"
     const val KEY_REMINDER_ENABLED = "daily_reminder_enabled"
 
-    /** Schedule a repeating alarm at 12:00 every day. */
+    /** Schedule a repeating alarm around 20:00 every day. */
     fun schedule(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -36,15 +38,16 @@ object ReminderScheduler {
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-            // If 09:05 today has already passed, schedule for tomorrow
+            // If 20:00 today has already passed, schedule for tomorrow
             if (timeInMillis <= System.currentTimeMillis()) {
                 add(Calendar.DAY_OF_YEAR, 1)
             }
         }
 
-        alarmManager.setExactAndAllowWhileIdle(
+        alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
             pendingIntent,
         )
     }
@@ -62,3 +65,4 @@ object ReminderScheduler {
         alarmManager.cancel(pendingIntent)
     }
 }
+
