@@ -79,11 +79,23 @@ import kotlinx.coroutines.flow.collectLatest
 fun SettingsScreen(
     onNavigateBack                  : () -> Unit,
     onNavigateToCategoryManagement  : () -> Unit,
+    onNavigateToFaq                 : () -> Unit,
     viewModel                       : SettingsViewModel = hiltViewModel(),
 ) {
-    var reminderEnabled  by remember { mutableStateOf(false) }
     val context = androidx.compose.ui.platform.LocalContext.current
     var showDeleteDialog by remember { mutableStateOf(false) }
+
+    // Permission launcher for POST_NOTIFICATIONS (Android 13+)
+    val notificationPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.toggleReminder(true)
+            Toast.makeText(context, "Pengingat harian diaktifkan", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Izin notifikasi ditolak", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
@@ -189,14 +201,40 @@ fun SettingsScreen(
                         tint    = Color(0xFFF4511E),
                         label   = "Pengingat Harian",
                         subtitle = "Ingatkan saya untuk mencatat pengeluaran",
-                        checked = reminderEnabled,
-                        onCheckedChange = {
-                            reminderEnabled = it
-                            Toast.makeText(
-                                context,
-                                if (it) "Pengingat harian diaktifkan" else "Pengingat harian dinonaktifkan",
-                                Toast.LENGTH_SHORT,
-                            ).show()
+                        checked = viewModel.isReminderEnabled,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                // 1. Check notification permission (Android 13+)
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                                    val hasNotifPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+                                        context,
+                                        android.Manifest.permission.POST_NOTIFICATIONS,
+                                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                                    if (!hasNotifPermission) {
+                                        notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                        return@SwitchRow
+                                    }
+                                }
+                                // 2. Check exact alarm permission (Android 12+)
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                                    val alarmManager = context.getSystemService(android.app.AlarmManager::class.java)
+                                    if (!alarmManager.canScheduleExactAlarms()) {
+                                        Toast.makeText(context, "Izinkan alarm terlebih dahulu", Toast.LENGTH_SHORT).show()
+                                        val intent = android.content.Intent(
+                                            android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                                            android.net.Uri.parse("package:${context.packageName}"),
+                                        )
+                                        context.startActivity(intent)
+                                        return@SwitchRow
+                                    }
+                                }
+                                // All permissions granted
+                                viewModel.toggleReminder(true)
+                                Toast.makeText(context, "Pengingat harian diaktifkan", Toast.LENGTH_SHORT).show()
+                            } else {
+                                viewModel.toggleReminder(false)
+                                Toast.makeText(context, "Pengingat harian dinonaktifkan", Toast.LENGTH_SHORT).show()
+                            }
                         },
                     )
                 }
@@ -234,14 +272,14 @@ fun SettingsScreen(
                         tint    = Color(0xFFFFB300),
                         label   = "Beri Rating",
                         subtitle = "Nilai aplikasi di Play Store",
-                        onClick = {},
+                        onClick = { Toast.makeText(context, "Segera hadir", Toast.LENGTH_SHORT).show() },
                     )
                     CardDivider()
                     NavigationRow(
                         icon    = Icons.AutoMirrored.Outlined.HelpOutline,
                         tint    = Color(0xFF546E7A),
                         label   = "Bantuan & FAQ",
-                        onClick = {},
+                        onClick = onNavigateToFaq,
                     )
                     CardDivider()
                     StaticRow(

@@ -52,4 +52,9 @@ sealed class Screen(val route: String) {
      * "Pengaturan Kategori".
      */
     data object CategoryManagement : Screen("category_management")
+
+    /**
+     * FAQ screen — navigated to from Settings → "Bantuan & FAQ".
+     */
+    data object Faq : Screen("faq")
 }

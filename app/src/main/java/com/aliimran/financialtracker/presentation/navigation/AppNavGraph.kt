@@ -13,6 +13,7 @@ import com.aliimran.financialtracker.presentation.profile.ProfileScreen
 import com.aliimran.financialtracker.presentation.settings.CategoryManagementScreen
 import com.aliimran.financialtracker.presentation.detail.TransactionDetailScreen
 import com.aliimran.financialtracker.presentation.settings.ReportsScreen
+import com.aliimran.financialtracker.presentation.settings.FaqScreen
 import com.aliimran.financialtracker.presentation.settings.SettingsScreen
 
 /**
@@ -74,6 +75,15 @@ fun AppNavGraph(
                 onNavigateToCategoryManagement = {
                     navController.navigate(Screen.CategoryManagement.route)
                 },
+                onNavigateToFaq = {
+                    navController.navigate(Screen.Faq.route)
+                },
+            )
+        }
+
+        composable(Screen.Faq.route) {
+            FaqScreen(
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 

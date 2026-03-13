@@ -3,13 +3,18 @@ package com.aliimran.financialtracker.presentation.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aliimran.financialtracker.domain.model.Transaction
 import com.aliimran.financialtracker.domain.model.TransactionType
 import com.aliimran.financialtracker.domain.repository.TransactionRepository
+import com.aliimran.financialtracker.notification.ReminderScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
@@ -24,10 +29,35 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository,
+    @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<UiEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
+
+    private val prefs = appContext.getSharedPreferences(
+        ReminderScheduler.PREFS_NAME,
+        Context.MODE_PRIVATE,
+    )
+
+    /** Observable state backed by SharedPreferences. */
+    var isReminderEnabled by mutableStateOf(
+        prefs.getBoolean(ReminderScheduler.KEY_REMINDER_ENABLED, false)
+    )
+        private set
+
+    /** Toggle the reminder — persists in SharedPreferences and schedules/cancels the alarm. */
+    fun toggleReminder(enabled: Boolean) {
+        isReminderEnabled = enabled
+        prefs.edit()
+            .putBoolean(ReminderScheduler.KEY_REMINDER_ENABLED, enabled)
+            .apply()
+        if (enabled) {
+            ReminderScheduler.schedule(appContext)
+        } else {
+            ReminderScheduler.cancel(appContext)
+        }
+    }
 
     fun deleteAllTransactions() {
         viewModelScope.launch {
