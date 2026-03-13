@@ -19,3 +19,6 @@
     <init>(...);
     <fields>;
 }
+
+# ── BroadcastReceivers (notification & boot) ──────────────────
+-keep class com.aliimran.financialtracker.notification.** { *; }
