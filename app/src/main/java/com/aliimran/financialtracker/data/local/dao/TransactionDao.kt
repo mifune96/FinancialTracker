@@ -55,6 +55,18 @@ interface TransactionDao {
         endMs   : Long,
     ): Flow<List<TransactionWithCategory>>
 
+    @Transaction
+    @Query("""
+        SELECT * FROM transactions
+        WHERE timestamp >= :startMs
+          AND timestamp  < :endMs
+        ORDER BY timestamp DESC
+    """)
+    fun getTransactionsWithCategoryByDateRangeAllTypes(
+        startMs : Long,
+        endMs   : Long,
+    ): Flow<List<TransactionWithCategory>>
+
     // ── Category-linked queries (Category Management) ─────────
 
     /**

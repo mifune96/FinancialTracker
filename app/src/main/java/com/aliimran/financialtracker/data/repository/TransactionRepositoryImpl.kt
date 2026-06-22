@@ -54,10 +54,15 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     override fun getTransactionsByDateRange(
-        type: TransactionType, startMs: Long, endMs: Long,
-    ): Flow<List<Transaction>> =
-        transactionDao.getTransactionsWithCategoryByDateRange(type.name, startMs, endMs)
-            .map { it.map { entity -> entity.toDomain() } }
+        type: TransactionType?, startMs: Long, endMs: Long,
+    ): Flow<List<Transaction>> {
+        val flow = if (type == null) {
+            transactionDao.getTransactionsWithCategoryByDateRangeAllTypes(startMs, endMs)
+        } else {
+            transactionDao.getTransactionsWithCategoryByDateRange(type.name, startMs, endMs)
+        }
+        return flow.map { it.map { entity -> entity.toDomain() } }
+    }
 
     /**
      * One-shot count of transactions linked to [categoryId].

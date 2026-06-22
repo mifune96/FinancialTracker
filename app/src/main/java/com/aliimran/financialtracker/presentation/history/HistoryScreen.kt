@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.aliimran.financialtracker.domain.model.GroupedTransactions
 import com.aliimran.financialtracker.domain.model.Transaction
+import com.aliimran.financialtracker.presentation.components.EmptyTransactionsPlaceholder
+import com.aliimran.financialtracker.presentation.components.GroupedTransactionList
 import com.aliimran.financialtracker.presentation.components.MonthYearPickerDialog
 import com.aliimran.financialtracker.presentation.components.SummaryHeader
 import com.aliimran.financialtracker.presentation.components.TransactionItem
@@ -220,115 +222,4 @@ private fun HistoryTopBar(
     )
 }
 
-// ─────────────────────────────────────────────────────────────
-// Grouped Transaction List
-// ─────────────────────────────────────────────────────────────
 
-@Composable
-private fun GroupedTransactionList(
-    groups              : List<GroupedTransactions>,
-    onTransactionClick  : (Long) -> Unit,
-    onDeleteTransaction : (Transaction) -> Unit,
-    modifier            : Modifier = Modifier,
-) {
-    LazyColumn(
-        modifier      = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 80.dp), // clear the FAB
-    ) {
-        groups.forEach { group ->
-
-            // ── Date header ───────────────────────────────────
-            item(key = "header_${group.date}") {
-                DateGroupHeader(group = group)
-            }
-
-            // ── Transaction rows for this date ────────────────
-            items(
-                items = group.transactions,
-                key   = { "tx_${it.id}" },
-            ) { transaction ->
-                TransactionItem(
-                    transaction = transaction,
-                    onClick     = { onTransactionClick(transaction.id) },
-                )
-                HorizontalDivider(
-                    modifier    = Modifier.padding(horizontal = 16.dp),
-                    color       = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    thickness   = 0.5.dp,
-                )
-            }
-        }
-    }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Date Group Header
-// ─────────────────────────────────────────────────────────────
-
-@Composable
-private fun DateGroupHeader(
-    group    : GroupedTransactions,
-    modifier : Modifier = Modifier,
-) {
-    Row(
-        modifier              = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-        verticalAlignment     = Alignment.CenterVertically,
-    ) {
-        Text(
-            text  = group.date.toFullDateString(),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.SemiBold,
-        )
-        // Daily net total — positive green, negative red
-        AnimatedVisibility(
-            visible = group.dailyTotal != 0.0,
-            enter   = fadeIn(),
-            exit    = fadeOut(),
-        ) {
-            Text(
-                text  = (if (group.dailyTotal >= 0) "+" else "") +
-                        CurrencyFormatter.formatRupiah(group.dailyTotal),
-                style = MaterialTheme.typography.labelMedium,
-                color = if (group.dailyTotal >= 0)
-                    com.aliimran.financialtracker.presentation.theme.IncomeGreen
-                else
-                    com.aliimran.financialtracker.presentation.theme.ExpenseRed,
-            )
-        }
-    }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Empty State
-// ─────────────────────────────────────────────────────────────
-
-@Composable
-private fun EmptyTransactionsPlaceholder(modifier: Modifier = Modifier) {
-    Column(
-        modifier              = modifier.padding(32.dp),
-        horizontalAlignment   = Alignment.CenterHorizontally,
-        verticalArrangement   = androidx.compose.foundation.layout.Arrangement.Center,
-    ) {
-        Text(
-            text      = "📭",
-            style     = MaterialTheme.typography.displayMedium,
-        )
-        Text(
-            text      = "Belum ada transaksi",
-            style     = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier  = Modifier.padding(top = 12.dp),
-        )
-        Text(
-            text      = "Tap tombol + untuk menambahkan transaksi baru",
-            style     = MaterialTheme.typography.bodySmall,
-            color     = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier  = Modifier.padding(top = 4.dp),
-        )
-    }
-}

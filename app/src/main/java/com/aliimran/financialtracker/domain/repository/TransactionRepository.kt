@@ -15,7 +15,7 @@ interface TransactionRepository {
     suspend fun deleteTransaction(transaction: Transaction)
     suspend fun deleteAllTransactions()
     fun getMonthlySummary(year: Int, month: Int): Flow<MonthlySummary>
-    fun getTransactionsByDateRange(type: TransactionType, startMs: Long, endMs: Long): Flow<List<Transaction>>
+    fun getTransactionsByDateRange(type: TransactionType?, startMs: Long, endMs: Long): Flow<List<Transaction>>
 
     /**
      * Returns the number of transactions linked to [categoryId].

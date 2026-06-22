@@ -3,7 +3,7 @@ package com.aliimran.financialtracker
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import com.aliimran.financialtracker.notification.ReminderNotificationReceiver
+import com.aliimran.financialtracker.notification.DailyReminderWorker
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -21,7 +21,7 @@ class FinancialTrackerApp : Application() {
 
     private fun createReminderNotificationChannel() {
         val channel = NotificationChannel(
-            ReminderNotificationReceiver.CHANNEL_ID,
+            DailyReminderWorker.CHANNEL_ID,
             "Pengingat Harian",
             NotificationManager.IMPORTANCE_DEFAULT,
         ).apply {

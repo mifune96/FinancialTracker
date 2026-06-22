@@ -117,6 +117,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
 
+    // ── WorkManager ───────────────────────────────────────────
+    implementation(libs.androidx.work.runtime.ktx)
+
     // ── Coil (image loading for receipt thumbnails) ────────────
     implementation(libs.coil.compose)
 

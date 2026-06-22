@@ -215,6 +215,7 @@ fun SettingsScreen(
                                         return@SwitchRow
                                     }
                                 }
+                                // All permissions granted
                                 viewModel.toggleReminder(true)
                                 Toast.makeText(context, "Pengingat harian diaktifkan", Toast.LENGTH_SHORT).show()
                             } else {
