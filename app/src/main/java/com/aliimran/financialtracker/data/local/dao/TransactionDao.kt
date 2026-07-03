@@ -19,8 +19,8 @@ interface TransactionDao {
     @Transaction
     @Query("""
         SELECT * FROM transactions
-        WHERE strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year
-          AND strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :month
+        WHERE strftime('%Y', datetime(timestamp / 1000, 'unixepoch', 'localtime')) = :year
+          AND strftime('%m', datetime(timestamp / 1000, 'unixepoch', 'localtime')) = :month
         ORDER BY timestamp DESC
     """)
     fun getTransactionsWithCategoryByMonth(
@@ -83,16 +83,16 @@ interface TransactionDao {
     @Query("""
         SELECT COALESCE(SUM(amount), 0.0) FROM transactions
         WHERE type = 'INCOME'
-          AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year
-          AND strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :month
+          AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch', 'localtime')) = :year
+          AND strftime('%m', datetime(timestamp / 1000, 'unixepoch', 'localtime')) = :month
     """)
     fun getTotalIncomeByMonth(year: String, month: String): Flow<Double>
 
     @Query("""
         SELECT COALESCE(SUM(amount), 0.0) FROM transactions
         WHERE type = 'EXPENSE'
-          AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch')) = :year
-          AND strftime('%m', datetime(timestamp / 1000, 'unixepoch')) = :month
+          AND strftime('%Y', datetime(timestamp / 1000, 'unixepoch', 'localtime')) = :year
+          AND strftime('%m', datetime(timestamp / 1000, 'unixepoch', 'localtime')) = :month
     """)
     fun getTotalExpenseByMonth(year: String, month: String): Flow<Double>
 
